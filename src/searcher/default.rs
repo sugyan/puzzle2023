@@ -1,4 +1,4 @@
-use crate::{ExpressionElement, Rpn};
+use crate::{ExpressionElement, Fraction, Rpn};
 
 pub struct DefaultSearcher {
     nums: Vec<i32>,
@@ -16,7 +16,7 @@ impl Rpn for DefaultSearcher {
         let mut stack = Vec::new();
         for e in expr {
             match e {
-                ExpressionElement::Operand(n) => stack.push((*n, 1)),
+                ExpressionElement::Operand(n) => stack.push(Fraction(*n, 1)),
                 ExpressionElement::Operator(op) => {
                     if let (Some(n0), Some(n1)) = (stack.pop(), stack.pop()) {
                         if let Some(n) = op.apply(&n1, &n0) {

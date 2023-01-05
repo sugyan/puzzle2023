@@ -10,12 +10,12 @@ struct Args {
     #[arg(short, long, default_value = "2023")]
     target: i32,
     #[arg(short, long, default_value = "10")]
-    nums: i32,
+    max_num: i32,
     #[arg(short, long, default_value = "true", action = ArgAction::Set)]
     rev: bool,
-    #[arg(value_enum, short, long, default_value = "default")]
+    #[arg(value_enum, short, long, default_value = "fast")]
     searcher: Searcher,
-    #[arg(long, default_value = "false")]
+    #[arg(short, long, default_value = "false")]
     normalize: bool,
     #[arg(short, long)]
     verbose: bool,
@@ -77,9 +77,9 @@ fn solve(searcher: &mut impl Rpn, normalize: bool, verbose: bool) {
 fn main() {
     let args = Args::parse();
     let nums = if args.rev {
-        (1..=args.nums).rev().collect()
+        (1..=args.max_num).rev().collect()
     } else {
-        (1..=args.nums).collect()
+        (1..=args.max_num).collect()
     };
     match args.searcher {
         Searcher::Default => solve(

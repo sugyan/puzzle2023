@@ -1,9 +1,9 @@
-use crate::{ExpressionElement, Op, Rpn};
+use crate::{ExpressionElement, Fraction, Op, Rpn};
 
 pub struct Div8Searcher {
     nums: Vec<i32>,
     target: i32,
-    stack: Vec<(i32, i32)>,
+    stack: Vec<Fraction>,
     eight_depth: i32,
 }
 
@@ -69,7 +69,7 @@ impl Rpn for Div8Searcher {
                 } else if self.eight_depth >= 0 {
                     self.eight_depth += 1;
                 }
-                self.stack.push((n, 1));
+                self.stack.push(Fraction(n, 1));
                 expr.push(e);
                 ret |= self.traverse(expr, (i, j), results);
                 expr.pop();

@@ -1,12 +1,12 @@
-use crate::{ExpressionElement, Op, Rpn};
+use crate::{ExpressionElement, Fraction, Op, Rpn};
 use std::collections::HashSet;
 
-type Key = (Vec<(i32, i32)>, (usize, usize));
+type Key = (Vec<Fraction>, (usize, usize));
 
 pub struct FastSearcher {
     nums: Vec<i32>,
     target: i32,
-    stack: Vec<(i32, i32)>,
+    stack: Vec<Fraction>,
     seen: HashSet<Key>,
 }
 
@@ -18,6 +18,13 @@ impl FastSearcher {
             target,
             stack,
             seen: HashSet::new(),
+        }
+    }
+    fn gcd(a: i32, b: i32) -> i32 {
+        if b == 0 {
+            a
+        } else {
+            Self::gcd(b, a % b)
         }
     }
 }
@@ -70,7 +77,7 @@ impl Rpn for FastSearcher {
         let mut ret = false;
         match e {
             ExpressionElement::Operand(n) => {
-                self.stack.push((n, 1));
+                self.stack.push(Fraction(n, 1));
                 expr.push(e);
                 ret |= self.traverse(expr, (i, j), results);
                 expr.pop();
@@ -79,8 +86,8 @@ impl Rpn for FastSearcher {
             ExpressionElement::Operator(op) => {
                 if let (Some(n0), Some(n1)) = (self.stack.pop(), self.stack.pop()) {
                     if let Some(n) = op.apply(&n1, &n0) {
-                        let gcd = super::gcd(n.0, n.1);
-                        self.stack.push((n.0 / gcd, n.1 / gcd));
+                        let gcd = Self::gcd(n.0, n.1);
+                        self.stack.push(Fraction(n.0 / gcd, n.1 / gcd));
                         expr.push(e);
                         ret |= self.traverse(expr, (i, j), results);
                         expr.pop();
